@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AMORE - More than a match</title>
+<meta name="theme-color" content="#8b0000">
+<meta name="description" content="AMORE: less swiping, more feeling, better stories.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AMORE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#4a1016; --bg2:#6e0d12; --deep:#2a0509; --card:#a52428; --ink:#ffe3d8; --soft:#f6bdb3;
+  --peach:#ffcab5; --stroke:#8b1a22; --crimson:#e8334a; --coral:#f46767; --maroon:#8b0000; --ok:#3aa564;
+  --display:'Bagel Fat One','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+  --body:'Baloo 2','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:#2a0509;color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.45;overflow:hidden;
+  background-image:radial-gradient(circle at 20% 10%,rgba(232,51,74,.25),transparent 40%),radial-gradient(circle at 80% 90%,rgba(244,103,103,.18),transparent 45%)}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--peach)}
+:focus-visible{outline:3px solid var(--peach);outline-offset:2px;border-radius:8px}
+h1,h2,h3,p{margin:0}
+.disp{font-family:var(--display);font-weight:400;color:var(--peach);-webkit-text-stroke:.16em var(--stroke);paint-order:stroke fill;stroke-linejoin:round;line-height:1}
+#app{position:relative;width:min(480px,100%);height:100dvh;margin:0 auto;display:flex;flex-direction:column;background:linear-gradient(180deg,var(--bg),#3a0c11);overflow:hidden;
+  box-shadow:0 0 0 2px var(--stroke),0 0 80px rgba(0,0,0,.5)}
+.top{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top,0px)) 18px 8px;flex:none}
+.top .disp{font-size:1.7rem}
+.slots{display:flex;gap:4px}
+.slots svg{width:22px;height:22px;color:rgba(255,203,181,.25);transition:color .2s,transform .2s}
+.slots svg.on{color:var(--crimson);transform:scale(1.12)}
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 18px 22px;-webkit-overflow-scrolling:touch}
+.bar{flex:none;display:grid;grid-template-columns:repeat(5,1fr);background:var(--deep);border-top:2px solid var(--stroke);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.bar button{background:none;border:0;display:grid;justify-items:center;gap:0;padding:6px 0;color:var(--soft);font-size:.72rem;font-weight:700;position:relative;border-radius:14px}
+.bar button svg{width:24px;height:24px}
+.bar button[aria-current="page"]{color:var(--peach)}
+.bar button[aria-current="page"]::before{content:'';position:absolute;top:0;width:28px;height:4px;border-radius:0 0 4px 4px;background:var(--crimson)}
+.cnt{position:absolute;top:2px;right:calc(50% - 22px);background:var(--crimson);color:#fff;border-radius:999px;font-size:.65rem;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid var(--peach);background:var(--maroon);color:var(--ink);font-weight:700;padding:9px 20px;border-radius:999px;transition:transform .15s,background .15s}
+.btn:hover{background:var(--crimson)}
+.btn.pri{background:var(--peach);color:#4a1016}
+.btn.pri:hover{background:#fff1ea}
+.btn.sm{padding:3px 14px;font-size:.88rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%}
+.chip{border:2px solid var(--peach);background:transparent;border-radius:999px;padding:2px 14px;font-weight:700;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--peach);color:#4a1016}
+.chip.lock::after{content:' 🔒';font-size:.75em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.lbl{font-weight:800;display:flex;justify-content:space-between;margin-top:10px}
+.h2{font-family:var(--display);font-size:1.7rem;color:var(--peach);-webkit-text-stroke:.14em var(--stroke);paint-order:stroke fill;margin:6px 0 2px;line-height:1.05}
+.sub{color:var(--soft);margin-bottom:10px}
+.panel{background:var(--card);border:2px solid var(--peach);border-radius:24px;padding:16px;margin:12px 0}
+.panel h3{font-size:1.2rem;font-weight:800;line-height:1.15}
+.note{font-size:.85rem;color:var(--soft)}
+
+/* discover */
+.stack{position:relative;height:min(470px,60dvh);margin:8px 0}
+.pc{position:absolute;inset:0;background:var(--card);border:2px solid var(--peach);border-radius:30px;padding:22px 18px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;touch-action:pan-y;user-select:none;will-change:transform;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.pc.back{transform:scale(.95) translateY(14px);opacity:.7;pointer-events:none}
+.ava{display:grid;place-items:center;border-radius:50%;font-family:var(--display);color:#5a0d13;border:3px solid var(--peach);flex:none}
+.pc .ava{width:112px;height:112px;font-size:3.2rem}
+.pc h3{font-size:1.55rem;font-weight:800;line-height:1.1}
+.mp{position:absolute;top:14px;right:14px;background:var(--peach);color:#4a1016;font-weight:800;border-radius:999px;padding:0 12px;font-size:.9rem}
+.pc .vibe{color:var(--soft)}
+.pc .bio{max-width:30ch;font-weight:500}
+.tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.tags span{background:rgba(255,203,181,.16);border:1px solid var(--peach);padding:0 10px;border-radius:999px;font-size:.85rem;font-weight:600}
+.stamp{position:absolute;top:60px;font-family:var(--display);font-size:2rem;border:4px solid;border-radius:12px;padding:0 12px;opacity:0;pointer-events:none}
+.stamp.l{left:16px;transform:rotate(-14deg);color:var(--peach);border-color:var(--peach)}
+.stamp.r{right:16px;transform:rotate(14deg);color:#ff8fa0;border-color:#ff8fa0}
+.acts{display:flex;justify-content:center;gap:26px;margin-top:6px}
+.round{width:64px;height:64px;border-radius:50%;border:3px solid var(--peach);display:grid;place-items:center;font-size:1.5rem;font-weight:800;transition:transform .15s}
+.round:active{transform:scale(.92)}
+.round.no{background:var(--deep);color:var(--peach)}
+.round.yes{background:var(--crimson);color:#fff}
+.round svg{width:30px;height:30px}
+.empty{border:2px dashed var(--peach);border-radius:28px;padding:34px 20px;text-align:center;display:grid;gap:10px;justify-items:center}
+
+/* chats */
+.slot{display:flex;gap:12px;align-items:center;background:var(--card);border:2px solid var(--peach);border-radius:22px;padding:12px 14px;margin:10px 0;width:100%;text-align:left}
+.slot.emp{background:transparent;border-style:dashed;color:var(--soft);justify-content:center;min-height:68px}
+.slot .ava{width:52px;height:52px;font-size:1.5rem}
+.slot .mid{flex:1;min-width:0}
+.slot b{display:block;font-size:1.1rem;line-height:1.1}
+.slot .pv{color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.92rem}
+.slot .st{font-size:.78rem;font-weight:700;color:var(--peach)}
+.rm{border:1.5px solid var(--peach);background:transparent;border-radius:999px;padding:0 12px;font-size:.8rem;font-weight:700;height:28px;flex:none}
+.rm:disabled{opacity:.45;cursor:not-allowed}
+#chatv{position:absolute;inset:0;background:linear-gradient(180deg,var(--bg),#3a0c11);display:flex;flex-direction:column;transform:translateX(105%);transition:transform .25s;z-index:20}
+#chatv.show{transform:none}
+.ch{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;border-bottom:2px solid var(--stroke);background:var(--deep)}
+.ch .ava{width:42px;height:42px;font-size:1.2rem}
+.ch .who{flex:1;line-height:1.1}
+.ch .who small{color:var(--soft);font-weight:600}
+.iconb{width:40px;height:40px;border-radius:50%;border:2px solid var(--peach);background:transparent;display:grid;place-items:center;font-weight:800}
+.msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:80%;padding:8px 14px;border-radius:20px;font-weight:500;word-wrap:break-word}
+.m.them{background:var(--peach);color:#4a1016;border-bottom-left-radius:5px;align-self:flex-start}
+.m.me{background:var(--crimson);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
+.m.sys{align-self:center;background:rgba(0,0,0,.3);color:var(--soft);font-size:.85rem;border-radius:999px;padding:2px 14px;text-align:center}
+.typing{align-self:flex-start;display:flex;gap:4px;background:var(--peach);padding:12px 14px;border-radius:20px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#8b1a22;animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.ice{display:flex;gap:8px;overflow-x:auto;padding:4px 14px 8px;scrollbar-width:none}
+.ice .chip{flex:none;font-size:.85rem}
+.cin{display:flex;gap:8px;padding:8px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--deep)}
+.cin input{flex:1;font:inherit;background:#fff3ee;color:#3b0a10;border:2px solid var(--peach);border-radius:999px;padding:8px 16px;min-width:0}
+input[type=text],input[type=number],select{font:inherit;background:#fff3ee;color:#3b0a10;border:2px solid var(--peach);border-radius:14px;padding:8px 14px;width:100%}
+input[type=range]{width:100%;accent-color:var(--crimson)}
+
+/* plan */
+.lockov{position:relative}
+.lockov.locked>*:not(.lk){filter:blur(3px);pointer-events:none;user-select:none}
+.lk{position:absolute;inset:0;display:none;place-items:center;align-content:center;gap:8px;text-align:center;z-index:2;padding:12px}
+.lockov.locked .lk{display:grid}
+.out{background:rgba(0,0,0,.25);border-radius:18px;padding:14px;display:grid;gap:8px;margin-top:10px}
+.out b{color:var(--peach)}
+.tk{display:flex;background:var(--peach);color:#4a1016;border-radius:16px;overflow:hidden;margin:10px 0;position:relative}
+.tk .l{flex:1;padding:10px 14px}
+.tk .l b{display:block;line-height:1.15;font-size:1.05rem}
+.tk .l small{font-weight:600;opacity:.8}
+.tk .r{border-left:3px dashed #8b1a22;padding:8px 10px;display:grid;place-items:center;min-width:112px;text-align:center}
+.tk .r button{background:#8b0000;color:#ffe3d8;border:0;border-radius:999px;padding:3px 12px;font-weight:700;font-size:.85rem}
+.code{font-family:var(--display);font-size:1rem}
+.spons{position:absolute;top:6px;right:6px;font-size:.65rem;font-weight:800;background:#8b0000;color:#ffe3d8;padding:0 8px;border-radius:999px}
+
+/* words */
+.wc{background:var(--card);border:2px solid var(--peach);border-radius:30px;padding:20px;margin-top:8px}
+.dt{display:inline-block;background:var(--peach);color:#4a1016;font-weight:800;border-radius:999px;padding:0 12px;font-size:.85rem}
+.ww{font-size:2.8rem;margin:10px 0 0;word-break:break-word}
+.pron{color:var(--soft);font-weight:600}
+.mean{font-size:1.1rem;margin:10px 0}
+.bub{background:var(--peach);color:#4a1016;padding:10px 16px;border-radius:20px 20px 20px 4px;font-weight:600;margin:10px 0}
+.bub small{display:block;font-weight:800;opacity:.7}
+.risk{display:flex;gap:6px;align-items:center;font-weight:700;flex-wrap:wrap}
+.risk svg{width:18px;height:18px;color:rgba(255,203,181,.3)}
+.risk svg.on{color:var(--crimson)}
+.tip{margin-top:10px;border-top:2px dashed var(--peach);padding-top:10px;color:var(--soft)}
+.tip b{color:var(--peach)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.quiz{background:rgba(0,0,0,.25);border-radius:24px;padding:16px;margin-top:14px}
+.q{background:var(--card);border-radius:14px;padding:10px 14px;margin:10px 0;font-weight:600}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--peach);background:transparent;border-radius:14px;padding:6px 14px;font-weight:700;margin:6px 0}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.bad{background:#7a0c10;border-color:#7a0c10}
+
+/* sheet + toast + onboarding */
+.sheet{position:absolute;inset:0;background:rgba(20,0,3,.65);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.sheet.show{opacity:1;pointer-events:auto}
+.sheet .in{width:100%;max-height:85%;overflow-y:auto;background:var(--bg2);border:2px solid var(--peach);border-bottom:0;border-radius:28px 28px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .25s}
+.sheet.show .in{transform:none}
+.toast{position:absolute;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--peach);color:#4a1016;border-radius:16px;padding:10px 14px;font-weight:700;transform:translateY(200%);transition:transform .25s;z-index:60;text-align:center}
+.toast.show{transform:none}
+#onb{position:absolute;inset:0;z-index:50;background:linear-gradient(180deg,var(--bg),#3a0c11);overflow-y:auto;padding:calc(30px + env(safe-area-inset-top,0px)) 22px 30px;display:none}
+#onb.show{display:block}
+#onb .big{font-size:4.2rem;text-align:center;margin:10px 0 0}
+#onb .tl{text-align:center;font-weight:800;font-size:1.15rem;margin:4px 0 22px}
+.dots{display:flex;gap:6px;justify-content:center;margin:0 0 18px}
+.dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,203,181,.3)}
+.dots i.on{background:var(--peach)}
+label{font-weight:700;display:grid;gap:4px;margin:10px 0}
+.err{color:#ffb3bd;font-weight:700;margin-top:6px}
+.hb{position:fixed;pointer-events:none;z-index:99;font-size:1.3rem;color:var(--crimson)}
+.plan{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card);border:2px solid var(--peach);border-radius:20px;padding:12px 14px;margin:10px 0}
+.plan[aria-pressed="true"]{box-shadow:0 0 0 4px var(--crimson)}
+.plan b{display:block}
+.plan small{color:var(--soft)}
+.plan .pr{font-family:var(--display);color:var(--peach);font-size:1.3rem;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="onb" role="dialog" aria-label="Create your profile"></div>
+  <header class="top">
+    <div class="disp">AMORE</div>
+    <div class="slots" id="slots" aria-label="Chat slots used"></div>
+  </header>
+  <main id="view" tabindex="-1"></main>
+  <nav class="bar" aria-label="Main">
+    <button data-tab="discover" aria-label="Discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2 0 3.6 1.1 5.3 3 1.7-1.9 3.3-3 5.3-3 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>Discover</button>
+    <button data-tab="chats" aria-label="Chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 20.5l1.5-4.9A8 8 0 1 1 21 12z"/></svg>Chats<span class="cnt" id="cnt">0</span></button>
+    <button data-tab="plan" aria-label="Date planner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>Plan</button>
+    <button data-tab="words" aria-label="Word of the day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5V5.5M9 8h6M9 12h4"/></svg>Words</button>
+    <button data-tab="me" aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.2-6.5 8-6.5s7 2 8 6.5"/></svg>Me</button>
+  </nav>
+  <section id="chatv" aria-label="Conversation"></section>
+  <div class="sheet" id="sheet"><div class="in" id="sheetin" role="dialog"></div></div>
+  <div class="toast" id="toast" role="status"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const HEART='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2 0 3.6 1.1 5.3 3 1.7-1.9 3.3-3 5.3-3 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>';
+const money=n=>'₹'+Number(n).toLocaleString('en-IN');
+
+/* ---------- data ---------- */
+const INTENTS=[['serious','Something serious'],['slow','Taking it slow'],['open','Open to see']];
+const LIKES=['Food','Music','Travel','Books','Fitness','Art','Movies','Nature'];
+const PEOPLE=[
+ {id:1,n:'Ava',a:29,v:'Road trip anthems',b:'Window seat, aux cord, no destination.',t:['Music','Food','Travel'],i:'serious',g:['#f46767','#ffcab5']},
+ {id:2,n:'Kabir',a:27,v:'Second-hand bookshop regular',b:'Will lend you a book and expect a review.',t:['Books','Movies','Art'],i:'slow',g:['#ffcab5','#ffdbe3']},
+ {id:3,n:'Meera',a:26,v:'Sunrise runs, then chai',b:'Morning person, sorry in advance.',t:['Fitness','Nature','Food'],i:'serious',g:['#ffdbe3','#f46767']},
+ {id:4,n:'Rohan',a:28,v:'Gym playlist curator',b:'Ask me about my 200-song warm-up.',t:['Music','Fitness','Movies'],i:'open',g:['#f6a9a0','#ffcab5']},
+ {id:5,n:'Isha',a:25,v:'Sketchbook in every bag',b:'I draw the people I meet. Consider yourself warned.',t:['Art','Travel','Books'],i:'slow',g:['#ffcab5','#f46767']},
+ {id:6,n:'Arjun',a:30,v:'Will find the best momos',b:'Ranking Delhi street food, one plate at a time.',t:['Food','Nature','Travel'],i:'serious',g:['#ffdbe3','#ffcab5']},
+ {id:7,n:'Naina',a:27,v:'Indie films and open mics',b:'Looking for someone to clap loudest at my open mic.',t:['Music','Art','Movies'],i:'open',g:['#f46767','#ffdbe3']},
+ {id:8,n:'Dev',a:29,v:'Cooks on Sundays',b:'Dal is my love language.',t:['Fitness','Books','Food'],i:'slow',g:['#ffcab5','#f6a9a0']},
+ {id:9,n:'Tara',a:26,v:'Plant parent of 14',b:'Yes, I named them all.',t:['Nature','Art','Food'],i:'serious',g:['#ffdbe3','#f6a9a0']},
+ {id:10,n:'Veer',a:28,v:'Weekend trekker',b:'If it has a summit, I am in.',t:['Travel','Nature','Fitness'],i:'open',g:['#f6a9a0','#ffdbe3']},
+ {id:11,n:'Sana',a:27,v:'Stand-up comedy fan',b:'Make me laugh and I am yours.',t:['Movies','Music','Books'],i:'slow',g:['#f46767','#ffcab5']},
+ {id:12,n:'Yuvraj',a:29,v:'Chef in the making',b:'I will cook you something better than a restaurant would.',t:['Food','Travel','Art'],i:'serious',g:['#ffcab5','#f46767']}
+];
+const byId=id=>PEOPLE.find(p=>p.id===id);
+const grad=p=>`linear-gradient(135deg,${p.g[0]},${p.g[1]})`;
+const PLANS={Free:{price:0,perks:'Profile, basic matching, 4 active chats'},'AMORE Plus':{price:199,perks:'Advanced filters, enhanced discovery'},'AMORE Premium':{price:399,perks:'AI gift ideas, personalised date planning'}};
+const PAIRS=[['Arjun and Naina','Both love street food'],['Dev and Isha','Café hoppers'],['Kabir and Meera','Board-game people'],['Rohan and Ava','Live-music fans']];
+const PLACES=[
+ {n:'Chai and Chapters',a:'Café with a bookshop corner',o:'15% off your first date order',c:'AMORE-CHAI15',s:false},
+ {n:'Terrace Nine',a:'Rooftop dinner',o:'Free dessert for two',c:'AMORE-SWEET2',s:true},
+ {n:'The Mango Table',a:'Casual restaurant',o:'₹200 off bills above ₹1,200',c:'AMORE-200',s:false}
+];
+const AI={
+ Books:[['a handwritten note tucked inside their favourite paperback','a bookshop crawl at a Sunday book market, then coffee'],['a cloth-bound hardcover with a brass bookmark and a small candle','a quiet reading date in a garden with a flask of chai'],['a signed edition of their favourite author with a letter','an author talk or literature festival evening, then dinner']],
+ Music:[['a playlist built from your first chat, with a printed track list','an open-mic night at a café'],['good wired earphones and a handwritten lyric card','a small live-gig evening, then street food'],['a pair of tickets to a live concert with a framed setlist card','a front-row gig and a late dinner']],
+ Food:[['their favourite street snack in a cute box with a note','a street-food walk, splitting everything'],['a mini baking kit with a recipe card from you','a cook-together evening or a food workshop'],['a chef’s-table style dinner for two','a tasting-menu dinner at a partner restaurant']],
+ Travel:[['a scratch-off map and a luggage tag','a heritage walk through an old neighbourhood'],['a travel journal, passport cover and a day-trip plan','a sunrise day trip with a picnic'],['a weekend getaway voucher with a surprise packing list','a weekend away somewhere you have both never been']],
+ Fitness:[['a good water bottle and sweatband set with a note','an early-morning park walk and a smoothie'],['a yoga mat with a class pass for two','a beginner climbing or dance class together'],['a quality fitness band or a trek booking for two','a weekend trek, then a big breakfast']],
+ Art:[['a pocket sketchbook and good pens','a gallery visit followed by chai'],['a small canvas and paint set','a pottery or painting workshop for two'],['a framed print from an artist they admire','a gallery-opening evening and a long dinner']]
+};
+const OCC={ 'First date':'Keep it low-pressure and under two hours.','Birthday':'Make it about them. Add one surprise.','Anniversary':'Recreate your first date with a twist.','Just because':'Small and thoughtful beats big and generic.' };
+const W=[
+ {w:'Benching',p:'BEN-ching',m:'Keeping someone as a backup option. You stay in touch, but never make real plans, while you see if something better comes along.',e:'He likes every story I post but has not asked me out in a month.',r:3,t:'With only 4 chats, nobody gets left on the bench for long.'},
+ {w:'Breadcrumbing',p:'BRED-krum-bing',m:'Dropping small bits of attention, like a like, an emoji or a late reply, to keep someone interested without ever committing. Also called crumbing.',e:'She sends me a meme every few days but never answers when I ask to meet.',r:4,t:'A 4-chat limit makes it easy to spot who is only feeding you crumbs.'},
+ {w:'Ghosting',p:'GOH-sting',m:'Ending contact suddenly with no explanation, leaving the other person guessing.',e:'We talked every day for two weeks, and now my messages show as read with no reply.',r:5,t:'Remove a connection kindly after 24 hours instead of vanishing.'},
+ {w:'Orbiting',p:'OR-bit-ing',m:'Stopping all direct contact but still watching and reacting to someone’s social media, like a satellite that never lands.',e:'We have not spoken in months, yet they view every story I post.',r:3,t:'If someone is only orbiting, give your slot to someone who actually talks to you.'},
+ {w:'Zombieing',p:'ZOM-bee-ing',m:'Coming back into someone’s life after ghosting them, as if nothing happened.',e:'He vanished in March and texted “hey stranger” last night.',r:4,t:'You do not owe a reply. Decide if their effort now matches what you want.'},
+ {w:'Love bombing',p:'LUV BOM-ing',m:'Overwhelming someone with affection, gifts and big promises very early to create fast attachment.',e:'He talked about our future wedding on the second day.',r:5,t:'Real affection builds over time. A slow, intentional pace is a green flag.'},
+ {w:'Situationship',p:'sich-oo-AY-shun-ship',m:'A romantic relationship with no clear label or commitment, somewhere between friends and partners.',e:'We act like a couple but he says he does not like labels.',r:3,t:'If you want clarity, say it out loud. Your intentions matter on AMORE.'},
+ {w:'Soft launching',p:'soft LAWN-ching',m:'Hinting at a new partner on social media without showing their face, like a hand, a shadow or two coffee cups.',e:'She posted two chai cups on a rooftop and no caption.',r:1,t:'Nothing wrong here. It is a gentle way to share something new.'},
+ {w:'Cushioning',p:'KUSH-un-ing',m:'Keeping other romantic options warm as a cushion in case the current relationship ends.',e:'He chats with three others on the side just in case we break up.',r:4,t:'Four open chats on AMORE means you are choosing, not hoarding.'},
+ {w:'Cuffing season',p:'KUF-ing SEE-zun',m:'The colder months, roughly autumn to winter, when many people look for a steady partner.',e:'Everyone I know suddenly wants a coffee date and a cosy movie night.',r:1,t:'A good time for a double date at a warm café.'},
+ {w:'Kittenfishing',p:'KIT-un-fish-ing',m:'Exaggerating or lightly misrepresenting yourself online, such as old photos or a fancier job. A softer cousin of catfishing.',e:'His photos were from five years ago and his job turned out to be an internship.',r:3,t:'Honest profiles lead to better first dates.'},
+ {w:'Roaching',p:'ROH-ching',m:'Dating several people at once and hiding it, because if you find one, there are probably more.',e:'I found out he was seeing four other people while telling me I was the only one.',r:4,t:'Being open about intentions is a core idea on AMORE.'},
+ {w:'DTR',p:'dee-tee-AR',m:'Short for “define the relationship”: the talk where two people decide what they are to each other.',e:'We need to talk about what this is before we plan the next month.',r:0,t:'A clear DTR is a green flag. Ask early and kindly.'},
+ {w:'Slow fade',p:'sloh FAYD',m:'Gradually reducing contact, with slower replies and fewer plans, until the connection quietly fades.',e:'Her replies went from minutes to days, and then stopped.',r:3,t:'A kind “this is not working for me” is better than a fade.'}
+];
+
+/* ---------- state ---------- */
+const KEY='amore-app-v1';
+const DEF={profile:null,plan:'Free',chats:[],seen:[],saved:[],best:0,filter:'any'};
+let S;
+function load(){try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){S=Object.assign({},DEF);}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+load();
+let tab='discover', openChat=null, wi=null, score=0, qi=null, aiState={occ:'First date',like:'Food',budget:1500,out:null}, deferredInstall=null;
+const isPlus=()=>S.plan!=='Free', isPremium=()=>S.plan==='AMORE Premium';
+const HOUR=36e5, DAY=864e5;
+
+/* ---------- helpers ---------- */
+let tt;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3000);}
+function burst(el){
+  if(reduce||!el)return;
+  const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  for(let i=0;i<9;i++){
+    const s=document.createElement('span');s.className='hb';s.textContent='♥';s.style.left=cx+'px';s.style.top=cy+'px';document.body.appendChild(s);
+    const a=(Math.PI*2*i)/9+Math.random()*.5,d=50+Math.random()*60;
+    s.animate([{transform:'translate(-50%,-50%) scale(.5)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*d}px),calc(-50% + ${Math.sin(a)*d-30}px)) scale(1.3)`,opacity:0}],{duration:800+Math.random()*300,easing:'ease-out'}).onfinish=()=>s.remove();
+  }
+}
+function openSheet(html){$('#sheetin').innerHTML=html;$('#sheet').classList.add('show');}
+function closeSheet(){$('#sheet').classList.remove('show');}
+$('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSheet();}});
+function score_(p){
+  if(!S.profile)return 50;
+  const ov=p.t.filter(t=>S.profile.likes.includes(t)).length;
+  return Math.min(99,(p.i===S.profile.intent?40:15)+ov*20+(ov?0:10));
+}
+function remaining(c){return c.at+DAY-Date.now();}
+function fmtRem(ms){const h=Math.floor(ms/HOUR),m=Math.floor((ms%HOUR)/60000);return h+'h '+m+'m';}
+function upgradeSheet(why){
+  openSheet(`<h3 class="h2">Unlock more</h3><p class="sub">${esc(why)}</p>`+
+   Object.entries(PLANS).map(([k,v])=>`<button class="plan" data-plan="${esc(k)}" aria-pressed="${S.plan===k}"><span><b>${esc(k)}</b><small>${esc(v.perks)}</small></span><span class="pr">${v.price?money(v.price)+'/mo':'₹0'}</span></button>`).join('')+
+   `<p class="note">Demo app: choosing a plan does not take any payment.</p><button class="btn block" data-close style="margin-top:10px">Close</button>`);
+}
+
+/* ---------- onboarding ---------- */
+let ob={step:0,name:'',age:'',intent:'serious',likes:[],err:''};
+function renderOnb(){
+  const o=$('#onb');
+  const dots=`<div class="dots">${[0,1,2].map(i=>`<i class="${i<=ob.step?'on':''}"></i>`).join('')}</div>`;
+  let body='';
+  if(ob.step===0){
+    body=`<div class="disp big">AMORE</div><p class="tl">More than a match.<br>Less swiping. More feeling.</p>${dots}
+     <label>Your first name<input type="text" id="oname" value="${esc(ob.name)}" maxlength="24" autocomplete="given-name"></label>
+     <label>Your age<input type="number" id="oage" value="${esc(ob.age)}" min="1" max="99" inputmode="numeric"></label>
+     <p class="note">AMORE is for adults, 18 and over.</p>
+     ${ob.err?`<p class="err">${esc(ob.err)}</p>`:''}
+     <button class="btn pri block" id="onext" style="margin-top:14px">Continue</button>`;
+  }else if(ob.step===1){
+    body=`${dots}<h2 class="h2">What are you looking for?</h2><p class="sub">Be honest. Intentions matter here.</p>
+     <div class="chips">${INTENTS.map(([k,l])=>`<button class="chip" data-int="${k}" aria-pressed="${ob.intent===k}">${l}</button>`).join('')}</div>
+     <button class="btn pri block" id="onext" style="margin-top:14px">Continue</button><button class="btn block" id="oback" style="margin-top:8px">Back</button>`;
+  }else{
+    body=`${dots}<h2 class="h2">Pick up to 3 interests</h2><p class="sub">They shape your match scores.</p>
+     <div class="chips">${LIKES.map(l=>`<button class="chip" data-like="${l}" aria-pressed="${ob.likes.includes(l)}">${l}</button>`).join('')}</div>
+     ${ob.err?`<p class="err">${esc(ob.err)}</p>`:''}
+     <button class="btn pri block" id="onext" style="margin-top:14px">Start meeting people</button><button class="btn block" id="oback" style="margin-top:8px">Back</button>`;
+  }
+  o.innerHTML=body;
+  o.classList.add('show');
+}
+$('#onb').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.int){ob.intent=b.dataset.int;renderOnb();return;}
+  if(b.dataset.like){const k=b.dataset.like;if(ob.likes.includes(k))ob.likes=ob.likes.filter(x=>x!==k);else if(ob.likes.length<3)ob.likes.push(k);renderOnb();return;}
+  if(b.id==='oback'){ob.step--;ob.err='';renderOnb();return;}
+  if(b.id==='onext'){
+    if(ob.step===0){
+      ob.name=($('#oname').value||'').trim();ob.age=$('#oage').value;
+      const a=parseInt(ob.age,10);
+      if(!ob.name){ob.err='Add your first name.';}
+      else if(!(a>=18)){ob.err='AMORE is for people aged 18 and over.';}
+      else{ob.err='';ob.step=1;}
+      renderOnb();
+    }else if(ob.step===1){ob.step=2;ob.err='';renderOnb();}
+    else{
+      if(!ob.likes.length){ob.err='Pick at least one interest.';renderOnb();return;}
+      S.profile={name:ob.name,age:parseInt(ob.age,10),intent:ob.intent,likes:ob.likes.slice()};
+      save();$('#onb').classList.remove('show');tab='discover';render();toast('Welcome, '+S.profile.name+'.');
+    }
+  }
+});
+
+/* ---------- shell ---------- */
+function renderShell(){
+  $('#slots').innerHTML=Array.from({length:4},(_,i)=>HEART.replace('<svg','<svg class="'+(i<S.chats.length?'on':'')+'"')).join('');
+  $('#cnt').textContent=S.chats.length;
+  $$('.bar button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false'));
+}
+function render(){
+  if(!S.profile){renderOnb();return;}
+  renderShell();
+  const v=$('#view');
+  ({discover:rDiscover,chats:rChats,plan:rPlan,words:rWords,me:rMe})[tab](v);
+}
+$('.bar').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;tab=b.dataset.tab;render();$('#view').scrollTop=0;});
+
+/* ---------- discover ---------- */
+function queue(){
+  const inChat=S.chats.map(c=>c.pid);
+  let q=PEOPLE.filter(p=>!S.seen.includes(p.id)&&!inChat.includes(p.id));
+  if(S.filter!=='any')q=q.filter(p=>p.i===S.filter);
+  return q.sort((a,b)=>score_(b)-score_(a));
+}
+function cardHTML(p,back){
+  return `<div class="pc ${back?'back':''}" ${back?'':'id="topcard"'} aria-live="polite">
+   <span class="mp">${score_(p)}% match</span>
+   <div class="ava" style="background:${grad(p)}">${p.n[0]}</div>
+   <h3>${esc(p.n)}, ${p.a}</h3><div class="vibe">${esc(p.v)}</div>
+   <p class="bio">${esc(p.b)}</p>
+   <div class="tags">${p.t.map(t=>`<span>${t}</span>`).join('')}</div>
+   <div class="tags"><span>${INTENTS.find(x=>x[0]===p.i)[1]}</span></div>
+   ${back?'':'<span class="stamp l" id="stl">PASS</span><span class="stamp r" id="str">CONNECT</span>'}
+  </div>`;
+}
+function rDiscover(v){
+  const q=queue();
+  const filt=`<div class="chips" role="group" aria-label="Filter by intention"><button class="chip" data-f="any" aria-pressed="${S.filter==='any'}">Everyone</button>${INTENTS.map(([k,l])=>`<button class="chip ${isPlus()?'':'lock'}" data-f="${k}" aria-pressed="${S.filter===k}">${l}</button>`).join('')}</div>`;
+  let main;
+  if(q.length){
+    main=`<div class="stack">${q[1]?cardHTML(q[1],true):''}${cardHTML(q[0],false)}</div>
+     <div class="acts"><button class="round no" id="passB" aria-label="Pass">✕</button><button class="round yes" id="yesB" aria-label="Connect">${HEART}</button></div>
+     <p class="note" style="text-align:center;margin-top:10px">Drag the card, or tap a button. You have ${4-S.chats.length} open slot${4-S.chats.length===1?'':'s'}.</p>`;
+  }else{
+    main=`<div class="empty"><h3 class="h2">You have met everyone nearby</h3><p class="sub">These are demo profiles. Reset to see them again.</p><button class="btn pri" id="resetSeen">Show profiles again</button></div>`;
+  }
+  v.innerHTML=`<h2 class="h2">Discover</h2><p class="sub">Matched on interests and intentions. Demo profiles.</p>${filt}${main}`;
+  const tc=$('#topcard');if(tc&&q.length)setupSwipe(tc,q[0]);
+}
+function decide(p,yes,btn){
+  const tc=$('#topcard');
+  const finish=()=>{
+    if(yes){
+      if(S.chats.length>=4){fullSheet();render();return;}
+      S.chats.push({pid:p.id,at:Date.now(),msgs:[]});S.seen.push(p.id);save();burst(btn||tc);
+      toast('Connected with '+p.n+'.');
+      scheduleGreeting(p.id);
+    }else{S.seen.push(p.id);save();}
+    render();
+  };
+  if(yes&&S.chats.length>=4){fullSheet();snapBack(tc);return;}
+  if(tc&&!reduce){tc.style.transition='transform .25s,opacity .25s';tc.style.transform=`translateX(${yes?420:-420}px) rotate(${yes?20:-20}deg)`;tc.style.opacity='0';setTimeout(finish,220);}
+  else finish();
+}
+function snapBack(tc){if(!tc)return;tc.style.transition='transform .25s';tc.style.transform='';const l=$('#stl'),r=$('#str');if(l)l.style.opacity=0;if(r)r.style.opacity=0;}
+function fullSheet(){
+  const rows=S.chats.map(c=>{const p=byId(c.pid),ms=remaining(c);return `<div class="slot" style="margin:8px 0"><span class="ava" style="background:${grad(p)}">${p.n[0]}</span><span class="mid"><b>${esc(p.n)}</b><span class="st">${ms>0?'Removable in '+fmtRem(ms):'Can be removed now'}</span></span><button class="rm" data-rm="${c.pid}" ${ms>0?'disabled':''}>Remove</button></div>`;}).join('');
+  openSheet(`<h3 class="h2">All 4 slots are full</h3><p class="sub">That is the AMORE rule. Give your chats real attention. After 24 hours you can remove one to make space.</p>${rows}<button class="btn block" data-close style="margin-top:10px">Keep chatting</button>`);
+}
+function setupSwipe(el,p){
+  let sx=0,dx=0,drag=false;
+  el.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX;dx=0;el.style.transition='none';el.setPointerCapture(e.pointerId);});
+  el.addEventListener('pointermove',e=>{
+    if(!drag)return;dx=e.clientX-sx;
+    el.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;
+    const l=$('#stl'),r=$('#str');if(l)l.style.opacity=dx<0?Math.min(1,-dx/90):0;if(r)r.style.opacity=dx>0?Math.min(1,dx/90):0;
+  });
+  const end=()=>{
+    if(!drag)return;drag=false;
+    if(dx>100)decide(p,true,$('#yesB'));
+    else if(dx<-100)decide(p,false);
+    else snapBack(el);
+  };
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+}
+
+/* ---------- chats ---------- */
+function replyFor(p,n,txt){
+  const t=txt.toLowerCase();
+  if(/(date|coffee|meet|dinner)/.test(t))return 'I would love that. Check the Plan tab for ideas and a coupon, then pick a day!';
+  const L=['Ha, I like that. Tell me more!','Honestly I am a '+p.t[0].toLowerCase()+' person through and through. You?','Okay now I am curious. What does your perfect Sunday look like?','What is the best thing that happened to you this week?','That made me smile. What would a great first date be for you?','I like how you think. Coffee this weekend?'];
+  return L[n%L.length];
+}
+function greeting(p){return `Hi, I am ${p.n}. I saw we both like ${(S.profile.likes.find(l=>p.t.includes(l))||p.t[0]).toLowerCase()}. What got you into it?`;}
+function scheduleGreeting(pid){
+  setTimeout(()=>{
+    const c=S.chats.find(x=>x.pid===pid);if(!c||c.msgs.length)return;
+    c.msgs.push({f:'them',t:greeting(byId(pid)),ts:Date.now()});save();
+    if(openChat===pid)renderChat();else if(tab==='chats')render();
+  },1800);
+}
+function rChats(v){
+  const slots=Array.from({length:4},(_,i)=>{
+    const c=S.chats[i];
+    if(!c)return `<button class="slot emp" data-go="discover">Open slot. Find someone in Discover.</button>`;
+    const p=byId(c.pid),ms=remaining(c),last=c.msgs[c.msgs.length-1];
+    return `<div class="slot" role="group"><button style="all:unset;display:flex;gap:12px;align-items:center;flex:1;min-width:0;cursor:pointer" data-open="${p.id}"><span class="ava" style="background:${grad(p)}">${p.n[0]}</span><span class="mid"><b>${esc(p.n)}</b><span class="pv">${last?esc(last.t):'Say hello'}</span><span class="st">${ms>0?'Removable in '+fmtRem(ms):'Can be removed now'}</span></span></button><button class="rm" data-rm="${p.id}" ${ms>0?'disabled':''}>Remove</button></div>`;
+  }).join('');
+  v.innerHTML=`<h2 class="h2">Your 4 chats</h2><p class="sub">${S.chats.length}/4 used. Fewer chats, better conversations.</p>${slots}
+   <div class="panel"><h3>Double date</h3><p class="note" style="margin:4px 0 10px">Make first dates easier. Bring a friend and meet another pair.</p><button class="btn pri sm" id="dd">Find another pair</button></div>`;
+}
+function renderChat(){
+  const c=S.chats.find(x=>x.pid===openChat);if(!c){closeChat();return;}
+  const p=byId(c.pid);
+  const youSent=c.msgs.some(m=>m.f==='me');
+  $('#chatv').innerHTML=`<div class="ch"><button class="iconb" id="cback" aria-label="Back">←</button><span class="ava" style="background:${grad(p)}">${p.n[0]}</span><div class="who"><b>${esc(p.n)}, ${p.a}</b><br><small>${esc(p.v)}</small></div><button class="btn sm pri" id="cplan">Plan date</button></div>
+   <div class="msgs" id="msgs" aria-live="polite">${c.msgs.length?'':'<div class="m sys">You matched. Start something real.</div>'}${c.msgs.map(m=>`<div class="m ${m.f}">${esc(m.t)}</div>`).join('')}</div>
+   ${youSent?'':`<div class="ice">${['What is your go-to comfort food?','Best trip you have taken?','Which song is on repeat?'].map(t=>`<button class="chip" data-ice="${esc(t)}">${esc(t)}</button>`).join('')}</div>`}
+   <form class="cin" id="cform"><input type="text" id="cin" placeholder="Write a message" aria-label="Message" autocomplete="off" maxlength="400"><button class="btn pri" type="submit">Send</button></form>`;
+  const m=$('#msgs');m.scrollTop=m.scrollHeight;
+}
+function showChat(pid){openChat=pid;renderChat();$('#chatv').classList.add('show');}
+function closeChat(){openChat=null;$('#chatv').classList.remove('show');render();}
+function sendMsg(txt){
+  txt=(txt||'').trim();if(!txt)return;
+  const c=S.chats.find(x=>x.pid===openChat);if(!c)return;
+  c.msgs.push({f:'me',t:txt,ts:Date.now()});save();renderChat();
+  const p=byId(c.pid),n=c.msgs.filter(x=>x.f==='me').length;
+  const m=$('#msgs'),ty=document.createElement('div');ty.className='typing';ty.innerHTML='<i></i><i></i><i></i>';m.appendChild(ty);m.scrollTop=m.scrollHeight;
+  const pid=c.pid;
+  setTimeout(()=>{
+    const cc=S.chats.find(x=>x.pid===pid);if(!cc)return;
+    cc.msgs.push({f:'them',t:replyFor(p,n,txt),ts:Date.now()});save();
+    if(openChat===pid)renderChat();
+  },1100+Math.random()*900);
+}
+$('#chatv').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.id==='cback')closeChat();
+  else if(b.id==='cplan'){closeChat();tab='plan';render();}
+  else if(b.dataset.ice)sendMsg(b.dataset.ice);
+});
+$('#chatv').addEventListener('submit',e=>{e.preventDefault();const i=$('#cin');const t=i.value;i.value='';sendMsg(t);});
+function removeChat(pid){
+  const c=S.chats.find(x=>x.pid===pid);if(!c)return;
+  if(remaining(c)>0){toast('Available after 24 hours.');return;}
+  S.chats=S.chats.filter(x=>x.pid!==pid);save();toast(byId(pid).n+' removed. One slot is open.');closeSheet();render();
+}
+function ddSheet(){
+  if(!S.chats.length){toast('Connect with someone first.');return;}
+  openSheet(`<h3 class="h2">Double date</h3><p class="sub">Pick a pair to invite. Group first dates feel easier.</p>`+
+   PAIRS.map((p,i)=>`<div class="slot" style="margin:8px 0"><span class="mid"><b>${p[0]}</b><span class="pv">${p[1]}</span></span><button class="btn sm pri" data-dd="${i}">Invite</button></div>`).join('')+
+   `<p class="note">Demo: invites are not sent to real people.</p><button class="btn block" data-close style="margin-top:10px">Close</button>`);
+}
+
+/* ---------- plan ---------- */
+function rPlan(v){
+  const a=aiState;
+  const locked=!isPremium();
+  v.innerHTML=`<h2 class="h2">Date planner</h2><p class="sub">Gift ideas and date plans, made for your budget.</p>
+   <div class="lockov ${locked?'locked':''}">
+    <div class="panel">
+     <div class="lbl">Occasion</div><div class="chips">${Object.keys(OCC).map(k=>`<button class="chip" data-occ="${k}" aria-pressed="${a.occ===k}">${k}</button>`).join('')}</div>
+     <div class="lbl">Their interest</div><div class="chips">${Object.keys(AI).map(k=>`<button class="chip" data-ai="${k}" aria-pressed="${a.like===k}">${k}</button>`).join('')}</div>
+     <label for="bud" class="lbl" style="margin:0"><span>Budget</span><span id="budv">${money(a.budget)}</span></label>
+     <input type="range" id="bud" min="300" max="5000" step="100" value="${a.budget}">
+     <button class="btn pri block" id="doPlan" style="margin-top:12px">Plan it</button>
+     <div id="aiout" aria-live="polite"></div>
+    </div>
+    <div class="lk"><h3 class="h2">Premium feature</h3><p class="sub">AI gift ideas and personalised date planning come with AMORE Premium.</p><button class="btn pri" id="unlock">See plans</button></div>
+   </div>
+   <h2 class="h2" style="margin-top:20px">Restaurants and coupons</h2><p class="sub">Free for everyone. Show the code at a partner place.</p>
+   ${PLACES.map((p,i)=>`<div class="tk">${p.s?'<span class="spons">Sponsored</span>':''}<div class="l"><b>${p.n}</b><small>${p.a}</small><div style="margin-top:4px;font-weight:700">${p.o}</div></div><div class="r"><button data-cp="${i}">Reveal coupon</button></div></div>`).join('')}
+   <p class="note">Sample partners for the demo.</p>`;
+  if(a.out)$('#aiout').innerHTML=a.out;
+}
+function doPlan(){
+  const a=aiState,tier=a.budget<800?0:a.budget<2500?1:2,[g,d]=AI[a.like][tier];
+  const pl=PLACES[(a.budget+a.like.length)%PLACES.length];
+  a.out=`<div class="out"><div><b>Gift idea:</b> ${g}.</div><div><b>Date idea:</b> ${d}.</div><div><b>Where:</b> ${pl.n}. Coupon ${pl.c}: ${pl.o}.</div><div><b>Tip for a ${a.occ.toLowerCase()}:</b> ${OCC[a.occ]}</div><button class="btn sm" id="cpplan" style="justify-self:start">Copy plan</button></div>`;
+  $('#aiout').innerHTML=a.out;
+  a._txt=`AMORE plan (${a.occ}): gift - ${g}. Date - ${d}. Where - ${pl.n}, coupon ${pl.c}.`;
+}
+
+/* ---------- words ---------- */
+const todayI=(()=>{const d=new Date();return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/DAY)%W.length;})();
+function riskHTML(n){
+  if(n===0)return '<span>Green flag</span>';
+  return '<span>'+(n===1?'Mostly harmless':'Heartbreak risk')+'</span><span style="display:flex;gap:2px" role="img" aria-label="'+n+' out of 5">'+Array.from({length:5},(_,i)=>HEART.replace('<svg','<svg class="'+(i<n?'on':'')+'"')).join('')+'</span>';
+}
+function newQ(){
+  let i;do{i=Math.floor(Math.random()*W.length);}while(i===qi);qi=i;
+  const o=[i];while(o.length<3){const j=Math.floor(Math.random()*W.length);if(!o.includes(j))o.push(j);}
+  o.sort(()=>Math.random()-.5);return o;
+}
+let qopts=null,qdone=false,qmsg='';
+function rWords(v){
+  if(wi===null)wi=todayI;
+  if(!qopts){qopts=newQ();qdone=false;qmsg='';}
+  const x=W[wi],saved=S.saved.includes(wi);
+  v.innerHTML=`<h2 class="h2">Word of the Day</h2><p class="sub">Name what is happening. A new word every day.</p>
+   <article class="wc"><span class="dt">${wi===todayI?'Today’s word':'Browsing'}</span><h3 class="disp ww">${esc(x.w)}</h3><div class="pron">/ ${esc(x.p)} /</div>
+   <p class="mean">${esc(x.m)}</p><div class="bub"><small>How it sounds in real life</small>“${esc(x.e)}”</div>
+   <div class="risk">${riskHTML(x.r)}</div><p class="tip"><b>On AMORE:</b> ${esc(x.t)}</p>
+   <div class="row"><button class="btn sm" id="wp">Previous</button><button class="btn sm" id="wn">Next</button><button class="btn sm pri" id="ws" aria-pressed="${saved}">${saved?'Saved':'Save word'}</button><button class="btn sm" id="wc2">Share</button></div></article>
+   <div class="quiz"><h3 style="font-weight:800">Name that behaviour</h3><div class="q">${qdone?esc(qmsg):'“'+esc(W[qi].e)+'”'}</div>
+   ${qopts.map(j=>`<button class="opt ${qdone&&j===qi?'ok':''}" data-q="${j}" ${qdone?'disabled':''}>${esc(W[j].w)}</button>`).join('')}
+   <div class="lbl"><span>Streak ${score} · Best ${S.best}</span>${qdone?'<button class="btn sm pri" id="qn">Next question</button>':''}</div></div>
+   ${S.saved.length?`<h3 style="font-weight:800;margin-top:16px">Saved words</h3><div class="chips">${S.saved.map(i=>`<button class="chip" data-w="${i}">${esc(W[i].w)}</button>`).join('')}</div>`:''}`;
+}
+
+/* ---------- me ---------- */
+function rMe(v){
+  const p=S.profile;
+  v.innerHTML=`<h2 class="h2">Me</h2>
+   <div class="panel"><h3>${esc(p.name)}, ${p.age}</h3><p class="sub" style="margin:2px 0 8px">${INTENTS.find(x=>x[0]===p.intent)[1]}</p><div class="tags" style="justify-content:flex-start">${p.likes.map(l=>`<span>${l}</span>`).join('')}</div><button class="btn sm" id="editP" style="margin-top:12px">Edit profile</button></div>
+   <div class="panel"><h3>Your plan: ${esc(S.plan)}</h3><p class="note" style="margin:4px 0 10px">${esc(PLANS[S.plan].perks)}</p><button class="btn sm pri" id="chgPlan">Change plan</button></div>
+   <div class="panel"><h3>Install AMORE</h3><p class="note" style="margin:4px 0 10px" id="instTxt">On Android Chrome, tap the menu and choose Install app. On iPhone Safari, tap Share, then Add to Home Screen.</p><button class="btn sm pri" id="inst" ${deferredInstall?'':'hidden'}>Install now</button></div>
+   <div class="panel"><h3>Demo tools</h3><p class="note" style="margin:4px 0 10px">The 24-hour rule is real. Use this to show how removal works without waiting a day.</p><div class="row" style="margin-top:0"><button class="btn sm" id="skip24" ${S.chats.length?'':'disabled'}>Skip 24 hours</button><button class="btn sm" id="resetAll">Reset app</button></div></div>
+   <div class="panel"><h3>Find us</h3><div class="row" style="margin-top:8px"><a class="btn sm" href="https://www.instagram.com/_amore.in_?igsh=MWpuc20wNWwxdTdrZw==" target="_blank" rel="noopener">Instagram</a><a class="btn sm" href="http://amore4.odoo.com/" target="_blank" rel="noopener">Website</a><a class="btn sm" href="mailto:amoreindia.customercare@gmail.com">Email</a></div></div>
+   <p class="note" style="text-align:center">All data stays on this device. Profiles and chats are a demo.</p>`;
+}
+
+/* ---------- events ---------- */
+$('#view').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const d=b.dataset;
+  if(d.f!==undefined){
+    if(d.f!=='any'&&!isPlus()){upgradeSheet('Filtering by intention is an AMORE Plus feature.');return;}
+    S.filter=d.f;save();render();return;
+  }
+  if(b.id==='passB'){const q=queue();if(q[0])decide(q[0],false);return;}
+  if(b.id==='yesB'){const q=queue();if(q[0])decide(q[0],true,b);return;}
+  if(b.id==='resetSeen'){S.seen=[];S.filter='any';save();render();return;}
+  if(d.go){tab=d.go;render();return;}
+  if(d.open){showChat(+d.open);return;}
+  if(d.rm){removeChat(+d.rm);return;}
+  if(b.id==='dd'){ddSheet();return;}
+  if(d.occ){aiState.occ=d.occ;aiState.out=null;render();return;}
+  if(d.ai){aiState.like=d.ai;aiState.out=null;render();return;}
+  if(b.id==='unlock'){upgradeSheet('AI gift suggestions and personalised date planning are AMORE Premium features.');return;}
+  if(b.id==='doPlan'){doPlan();return;}
+  if(b.id==='cpplan'){
+    (async()=>{try{await navigator.clipboard.writeText(aiState._txt);toast('Plan copied.');}catch(err){toast('Copy is not available here.');}})();return;}
+  if(d.cp!==undefined){const p=PLACES[+d.cp];b.parentElement.innerHTML=`<div><div class="code">${p.c}</div><small>Show at the table</small></div>`;return;}
+  if(b.id==='wp'){wi=(wi+W.length-1)%W.length;render();return;}
+  if(b.id==='wn'){wi=(wi+1)%W.length;render();return;}
+  if(b.id==='ws'){S.saved=S.saved.includes(wi)?S.saved.filter(i=>i!==wi):S.saved.concat(wi);save();render();return;}
+  if(b.id==='wc2'){
+    const x=W[wi];(async()=>{try{await navigator.clipboard.writeText(`${x.w} (${x.p}): ${x.m} Learn a dating word every day on AMORE.`);toast('Copied to share.');}catch(err){toast('Copy is not available here.');}})();return;}
+  if(d.w){wi=+d.w;render();$('#view').scrollTop=0;return;}
+  if(d.q!==undefined){
+    const ok=+d.q===qi;qdone=true;
+    if(ok){score++;burst(b);}else score=0;
+    if(score>S.best){S.best=score;save();}
+    qmsg=(ok?'Right. ':'Not quite. It was ')+W[qi].w+': '+W[qi].m;render();return;}
+  if(b.id==='qn'){qopts=newQ();qdone=false;render();return;}
+  if(b.id==='editP'){ob={step:0,name:S.profile.name,age:String(S.profile.age),intent:S.profile.intent,likes:S.profile.likes.slice(),err:''};renderOnb();return;}
+  if(b.id==='chgPlan'){upgradeSheet('Pick a plan to try its features.');return;}
+  if(b.id==='inst'&&deferredInstall){deferredInstall.prompt();deferredInstall=null;b.hidden=true;return;}
+  if(b.id==='skip24'){S.chats.forEach(c=>c.at-=DAY);save();toast('24 hours later.');render();return;}
+  if(b.id==='resetAll'){openSheet('<h3 class="h2">Reset AMORE?</h3><p class="sub">This clears your profile, chats and saved words on this device.</p><button class="btn pri block" id="doReset">Yes, reset</button><button class="btn block" data-close style="margin-top:8px">Cancel</button>');return;}
+});
+$('#view').addEventListener('input',e=>{
+  if(e.target.id==='bud'){aiState.budget=+e.target.value;aiState.out=null;$('#budv').textContent=money(aiState.budget);$('#aiout').innerHTML='';}
+});
+$('#sheet').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.close!==undefined)closeSheet();
+  else if(b.dataset.plan){S.plan=b.dataset.plan;if(!isPlus())S.filter='any';save();closeSheet();toast('Plan set to '+S.plan+' (demo).');render();}
+  else if(b.dataset.rm)removeChat(+b.dataset.rm);
+  else if(b.dataset.dd!==undefined){const p=PAIRS[+b.dataset.dd];closeSheet();toast('Invite sent to '+p[0]+' (demo).');}
+  else if(b.id==='doReset'){try{localStorage.removeItem(KEY);}catch(err){}load();S=Object.assign({},DEF);ob={step:0,name:'',age:'',intent:'serious',likes:[],err:''};closeSheet();tab='discover';render();}
+});
+$('#chatv').addEventListener('keydown',e=>{if(e.key==='Escape')closeChat();});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;if(tab==='me')render();});
+setInterval(()=>{if(tab==='chats'&&!openChat&&!$('#sheet').classList.contains('show'))render();},60000);
+
+/* ---------- boot ---------- */
+if(S.profile){S.chats.forEach(c=>{if(!c.msgs.length)scheduleGreeting(c.pid);});}
+render();
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});
+}
+})();
+</script>
+</body>
+</html>
